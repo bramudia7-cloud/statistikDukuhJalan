@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistik Padukuhan Jalan</title>
+    <style>
+        /* Reset some default styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        #statistik {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #penjelasan {
+            background-color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 30px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Statistik Padukuhan Jalan</h1>
+    </header>
+    <main>
+        <section id="penjelasan">
+            <p>
+                Padukuhan Jalan yang berada di Kalurahan Banaran merupakan salah satu wilayah pedesaan yang masih menjaga kekuatan ikatan sosial, tradisi, serta aktivitas ekonomi warganya. Kehidupan masyarakat di padukuhan ini ditopang oleh sektor pertanian, kegiatan keagamaan, dan beberapa usaha lainnya, terlihat bahwa warga memiliki semangat kebersamaan yang terorganisasi dalam berbagai kelompok masyarakat.
+            </p>
+        </section>
+        <section id="statistik">
+            <h2>Data Pendidikan</h2>
+            <div id="data-pendidikan"></div>
+            <div id="chart-container">
+                <canvas id="chart-pendidikan"></canvas>
+            </div>
+
+            <h2>Data Agama</h2>
+            <div id="data-agama"></div>
+            <div id="chart-container">
+                <canvas id="chart-agama"></canvas>
+            </div>
+
+            <h2>Data Jenis Kelamin</h2>
+            <div id="data-jenis-kelamin"></div>
+            <div id="chart-container">
+                <canvas id="chart-jenis-kelamin"></canvas>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Desa Tuntang. Semua hak dilindungi.</p>
+    </footer>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Data Pendidikan
+        const dataPendidikan = [
+            { "Pendidikan": "BELUM SEKOLAH", "Jumlah Orang": 72 },
+            { "Pendidikan": "BELUM TAMAT SD/SEDERAJAT", "Jumlah Orang": 39 },
+            { "Pendidikan": "TAMAT SD/SEDERAJAT", "Jumlah Orang": 71 },
+            { "Pendidikan": "TAMAT SMP", "Jumlah Orang": 50 },
+            { "Pendidikan": "TAMAT SMA", "Jumlah Orang": 115 }
+        ];
+
+        // Data Agama
+        const dataAgama = [
+            { "Agama": "ISLAM", "Jumlah Orang": 398 },
+            { "Agama": "KRISTEN", "Jumlah Orang": 0 },
+            { "Agama": "KATHOLIK", "Jumlah Orang": 0 },
+            { "Agama": "HINDU", "Jumlah Orang": 0 },
+            { "Agama": "BUDDHA", "Jumlah Orang": 0 },
+            { "Agama": "KONGHUCU", "Jumlah Orang": 0 },
+            { "Agama": "KEPERCAYAAN LAIN", "Jumlah Orang": 0 }
+        ];
+
+        // Data Jenis Kelamin
+        const dataJenisKelamin = [
+            { "Jenis Kelamin": "LAKI-LAKI", "Jumlah Orang": 201 },
+            { "Jenis Kelamin": "PEREMPUAN", "Jumlah Orang": 197 }
+        ];
+
+        // Fungsi untuk menampilkan data dalam tabel Pendidikan
+        function displayDataPendidikan() {
+            let html = '<table><thead><tr><th>Pendidikan</th><th>Jumlah Orang</th></tr></thead><tbody>';
+            dataPendidikan.forEach(row => {
+                html += `<tr><td>${row.Pendidikan}</td><td>${row["Jumlah Orang"]}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('data-pendidikan').innerHTML = html;
+        }
+
+        // Fungsi untuk menampilkan Pie Chart Pendidikan
+        function displayChartPendidikan() {
+            const ctx = document.getElementById('chart-pendidikan').getContext('2d');
+            const chartData = {
+                labels: dataPendidikan.map(row => row.Pendidikan),
+                datasets: [{
+                    label: 'Jumlah Orang',
+                    data: dataPendidikan.map(row => row["Jumlah Orang"]),
+                    backgroundColor: ['#3498db', '#2ecc71', '#f39c12', '#e74c3c', '#8e44ad'],
+                    borderColor: '#2980b9',
+                    borderWidth: 1
+                }]
+            };
+            const chartOptions = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw + ' orang';
+                            }
+                        }
+                    }
+                }
+            };
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // Fungsi untuk menampilkan data dalam tabel Agama
+        function displayDataAgama() {
+            let html = '<table><thead><tr><th>Agama</th><th>Jumlah Orang</th></tr></thead><tbody>';
+            dataAgama.forEach(row => {
+                html += `<tr><td>${row.Agama}</td><td>${row["Jumlah Orang"]}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('data-agama').innerHTML = html;
+        }
+
+        // Fungsi untuk menampilkan Pie Chart Agama
+        function displayChartAgama() {
+            const ctx = document.getElementById('chart-agama').getContext('2d');
+            const chartData = {
+                labels: dataAgama.map(row => row.Agama),
+                datasets: [{
+                    label: 'Jumlah Orang',
+                    data: dataAgama.map(row => row["Jumlah Orang"]),
+                    backgroundColor: ['#3498db', '#2ecc71', '#f39c12', '#e74c3c', '#8e44ad', '#1abc9c', '#34495e'],
+                    borderColor: '#2980b9',
+                    borderWidth: 1
+                }]
+            };
+            const chartOptions = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw + ' orang';
+                            }
+                        }
+                    }
+                }
+            };
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // Fungsi untuk menampilkan data dalam tabel Jenis Kelamin
+        function displayDataJenisKelamin() {
+            let html = '<table><thead><tr><th>Jenis Kelamin</th><th>Jumlah Orang</th></tr></thead><tbody>';
+            dataJenisKelamin.forEach(row => {
+                html += `<tr><td>${row["Jenis Kelamin"]}</td><td>${row["Jumlah Orang"]}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('data-jenis-kelamin').innerHTML = html;
+        }
+
+        // Fungsi untuk menampilkan Pie Chart Jenis Kelamin
+        function displayChartJenisKelamin() {
+            const ctx = document.getElementById('chart-jenis-kelamin').getContext('2d');
+            const chartData = {
+                labels: dataJenisKelamin.map(row => row["Jenis Kelamin"]),
+                datasets: [{
+                    label: 'Jumlah Orang',
+                    data: dataJenisKelamin.map(row => row["Jumlah Orang"]),
+                    backgroundColor: ['#3498db', '#e74c3c'],
+                    borderColor: '#2980b9',
+                    borderWidth: 1
+                }]
+            };
+            const chartOptions = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw + ' orang';
+                            }
+                        }
+                    }
+                }
+            };
+            new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // Panggil fungsi untuk menampilkan data dan diagram
+        displayDataPendidikan();
+        displayChartPendidikan();
+        displayDataAgama();
+        displayChartAgama();
+        displayDataJenisKelamin();
+        displayChartJenisKelamin();
+    </script>
+</body>
+</html>
